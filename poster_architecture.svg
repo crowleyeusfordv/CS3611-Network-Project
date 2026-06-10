@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#263238"/>
+    </marker>
+    <style>
+      .title { font-family: Arial, "Noto Sans CJK SC", sans-serif; font-size: 32px; font-weight: 700; fill: #102027; }
+      .box-title { font-family: Arial, "Noto Sans CJK SC", sans-serif; font-size: 22px; font-weight: 700; fill: #102027; }
+      .text { font-family: Arial, "Noto Sans CJK SC", sans-serif; font-size: 18px; fill: #263238; }
+      .small { font-family: Arial, "Noto Sans CJK SC", sans-serif; font-size: 16px; fill: #37474f; }
+      .line { stroke: #263238; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .feedback { stroke: #1565c0; stroke-width: 3; fill: none; marker-end: url(#arrow); stroke-dasharray: 8 6; }
+      .sender { fill: #e3f2fd; stroke: #1565c0; stroke-width: 3; rx: 18; }
+      .link { fill: #fff8e1; stroke: #f9a825; stroke-width: 3; rx: 18; }
+      .receiver { fill: #e8f5e9; stroke: #2e7d32; stroke-width: 3; rx: 18; }
+      .agent { fill: #f3e5f5; stroke: #7b1fa2; stroke-width: 3; rx: 18; }
+      .metric { fill: #ffffff; stroke: #90a4ae; stroke-width: 2; rx: 12; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="820" fill="#ffffff"/>
+  <text x="70" y="70" class="title">系统架构设计：UDP 应用层可靠传输与 Q-Learning 拥塞控制</text>
+
+  <rect x="70" y="130" width="360" height="280" class="sender"/>
+  <text x="105" y="175" class="box-title">Sender / 发送端</text>
+  <text x="105" y="215" class="text">封包：Seq + Timestamp + Payload</text>
+  <text x="105" y="250" class="text">未确认队列：unacked packets</text>
+  <text x="105" y="285" class="text">ACK 接收线程：累计 ACK</text>
+  <text x="105" y="320" class="text">RTO 定时器：超时重传</text>
+  <text x="105" y="355" class="text">CWND 控制发送窗口</text>
+
+  <rect x="520" y="130" width="360" height="280" class="link"/>
+  <text x="555" y="175" class="box-title">VirtualLink / 虚拟瓶颈链路</text>
+  <text x="555" y="215" class="text">固定带宽：100 packets/s</text>
+  <text x="555" y="250" class="text">有限队列：20 packets</text>
+  <text x="555" y="285" class="text">排队延迟：模拟 RTT 升高</text>
+  <text x="555" y="320" class="text">队列溢出：模拟拥塞丢包</text>
+  <text x="555" y="355" class="text">动态突变：100pps -> 50pps</text>
+
+  <rect x="970" y="130" width="360" height="280" class="receiver"/>
+  <text x="1005" y="175" class="box-title">Receiver / 接收端</text>
+  <text x="1005" y="215" class="text">解析自定义 UDP 报文</text>
+  <text x="1005" y="250" class="text">expected_seq 累计接收</text>
+  <text x="1005" y="285" class="text">乱序缓冲 out_of_order</text>
+  <text x="1005" y="320" class="text">返回 4B 累计 ACK</text>
+  <text x="1005" y="355" class="text">重复 ACK 触发快速重传</text>
+
+  <path d="M430 250 C465 250,485 250,520 250" class="line"/>
+  <text x="445" y="232" class="small">UDP 数据包</text>
+
+  <path d="M880 250 C915 250,935 250,970 250" class="line"/>
+  <text x="900" y="232" class="small">sendto()</text>
+
+  <path d="M970 360 C760 520,430 520,250 410" class="line"/>
+  <text x="630" y="545" class="small">累计 ACK / 重复 ACK</text>
+
+  <rect x="180" y="535" width="1040" height="210" class="agent"/>
+  <text x="220" y="580" class="box-title">Q-Learning 拥塞控制器</text>
+  <rect x="220" y="610" width="250" height="85" class="metric"/>
+  <text x="245" y="642" class="text">状态 State</text>
+  <text x="245" y="672" class="small">RTT 趋势 x 丢包事件</text>
+
+  <rect x="525" y="610" width="250" height="85" class="metric"/>
+  <text x="550" y="642" class="text">动作 Action</text>
+  <text x="550" y="672" class="small">保持 / cwnd+1 / cwnd/2</text>
+
+  <rect x="830" y="610" width="330" height="85" class="metric"/>
+  <text x="855" y="642" class="text">奖励 Reward</text>
+  <text x="855" y="672" class="small">吞吐 - RTT 惩罚 - 丢包惩罚</text>
+
+  <path d="M700 535 C660 485,520 440,380 385" class="feedback"/>
+  <text x="510" y="475" class="small" fill="#1565c0">吞吐 / RTT / 丢包</text>
+
+  <path d="M700 535 C620 455,420 455,290 410" class="feedback"/>
+  <text x="295" y="462" class="small" fill="#1565c0">调整 CWND</text>
+
+  <text x="80" y="785" class="small">关键扩展：动态网络突变、快速重传、乱序处理、AIMD vs Q-Learning 指标对比</text>
+</svg>
