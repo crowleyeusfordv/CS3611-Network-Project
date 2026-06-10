@@ -14,6 +14,7 @@ def test_congestion():
         link.send(packet)
         
     print("瞬间发送完毕！你可以观察到前面 20 个包悄悄排队发出去了，而后面 10 个包触发了丢弃机制。")
+    print(f"虚拟链路统计到的丢包数：{link.drain_dropped_count()}")
     
     # 让主线程稍微等一会儿，保证后台漏斗线程能把队列里的 20 个包慢悠悠地发完
     time.sleep(1)

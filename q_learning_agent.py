@@ -5,6 +5,9 @@ class QLearningAgent:
     def __init__(self, learning_rate=0.1, discount_factor=0.9, epsilon=0.2):
         # 初始化 6个状态 x 3个动作 的 Q-Table
         self.q_table = np.zeros((6, 3))
+        # 轻量先验：无丢包状态倾向探测增窗，丢包状态倾向退避。
+        self.q_table[[0, 2, 4], 1] = 2.0
+        self.q_table[[1, 3, 5], 2] = 1.0
         
         self.lr = learning_rate      # 学习率 (Alpha)
         self.gamma = discount_factor # 折扣因子
@@ -38,19 +41,16 @@ class QLearningAgent:
         td_error = td_target - self.q_table[state][action]
         self.q_table[state][action] += self.lr * td_error
 
-    def calculate_reward(self, throughput, avg_rtt, loss_count):
+    def calculate_reward(self, throughput_mbps, avg_rtt, loss_count):
         """
         计算复合奖励值。
         """
-        # 增大吞吐奖励权重，让策略更愿意探测更高 CWND 区间。
-        alpha = 2.2   # 鼓励高吞吐
-        # 你现在的 reward 里，“丢包惩罚”占比过高，容易让 Q-learning 在高 CWND 附近
-        # 因少量偶发丢包而迅速学习到“立刻减半”的保守策略。
-        # 这里降低延迟/丢包的惩罚权重，让策略更平滑地逼近拥塞边缘。
-        beta = 3.5    # 惩罚高延迟（进一步降，减少因 RTT 尖峰导致的频繁减半）
-        gamma = 4.0   # 惩罚丢包（进一步降，允许更积极的 CWND 探测）
-        
-        return alpha * throughput - beta * avg_rtt - gamma * loss_count
+        # throughput_mbps 的量级通常在 0.x 到 1.x，需要比 RTT/丢包更高的正权重。
+        alpha = 40.0  # 鼓励高吞吐
+        beta = 5.0    # 惩罚高延迟
+        gamma = 2.5   # 惩罚丢包/快重传/超时信号
+
+        return alpha * throughput_mbps - beta * avg_rtt - gamma * loss_count
 
     # ================= 以下是新增的三个关键方法 =================
 

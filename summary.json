@@ -1,0 +1,24 @@
+[
+  {
+    "controller": "aimd",
+    "avg_throughput_mbps": 0.4823022928961821,
+    "avg_rtt": 0.25362898104493703,
+    "max_cwnd": 21.004122855286145,
+    "total_acked_packets": 2000,
+    "total_link_drops": 23,
+    "total_timeouts": 93,
+    "total_fast_retransmits": 19,
+    "total_retransmissions": 112
+  },
+  {
+    "controller": "q",
+    "avg_throughput_mbps": 0.48966122106999804,
+    "avg_rtt": 0.15737427401109974,
+    "max_cwnd": 20.9794921875,
+    "total_acked_packets": 2000,
+    "total_link_drops": 2,
+    "total_timeouts": 16,
+    "total_fast_retransmits": 3,
+    "total_retransmissions": 19
+  }
+]
